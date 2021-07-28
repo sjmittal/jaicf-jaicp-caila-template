@@ -29,7 +29,7 @@ dependencies {
 
     implementation("com.just-ai.jaicf:core:$jaicf")
     implementation("com.just-ai.jaicf:jaicp:$jaicf")
-    implementation("com.just-ai.jaicf:caila:$jaicf")
+    implementation("com.just-ai.jaicf:rasa:$jaicf")
 }
 
 tasks {

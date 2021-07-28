@@ -1,8 +1,10 @@
 package com.justai.jaicf.template
 
 import com.justai.jaicf.BotEngine
-import com.justai.jaicf.activator.caila.CailaIntentActivator
-import com.justai.jaicf.activator.caila.CailaNLUSettings
+import com.justai.jaicf.activator.catchall.CatchAllActivator
+import com.justai.jaicf.activator.rasa.RasaIntentActivator
+import com.justai.jaicf.activator.rasa.api.RasaApi
+
 import com.justai.jaicf.activator.regex.RegexActivator
 import com.justai.jaicf.channel.jaicp.logging.JaicpConversationLogger
 import com.justai.jaicf.logging.Slf4jConversationLogger
@@ -10,13 +12,9 @@ import com.justai.jaicf.template.scenario.mainScenario
 import java.util.*
 
 val accessToken: String = System.getenv("JAICP_API_TOKEN") ?: Properties().run {
-    load(CailaNLUSettings::class.java.getResourceAsStream("/jaicp.properties"))
+    load(RasaIntentActivator::class.java.getResourceAsStream("/jaicp.properties"))
     getProperty("apiToken")
 }
-
-private val cailaNLUSettings = CailaNLUSettings(
-    accessToken = accessToken
-)
 
 val templateBot = BotEngine(
     scenario = mainScenario,
@@ -25,7 +23,8 @@ val templateBot = BotEngine(
         Slf4jConversationLogger()
     ),
     activators = arrayOf(
-        CailaIntentActivator.Factory(cailaNLUSettings),
-        RegexActivator
+        RasaIntentActivator.Factory(RasaApi("http://localhost:5005")),
+        RegexActivator,
+        CatchAllActivator
     )
 )

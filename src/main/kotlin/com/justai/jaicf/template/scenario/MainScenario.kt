@@ -1,41 +1,33 @@
 package com.justai.jaicf.template.scenario
 
-import com.justai.jaicf.activator.caila.caila
+
+import com.justai.jaicf.activator.rasa.rasa
 import com.justai.jaicf.builder.Scenario
 
 val mainScenario = Scenario {
     state("start") {
         activators {
             regex("/start")
-            intent("Hello")
+            intent("greet")
         }
         action {
+            val slots = activator.rasa?.slots
             reactions.run {
-                image("https://media.giphy.com/media/ICOgUNjpvO0PC/source.gif")
-                sayRandom(
-                    "Hello! How can I help?",
-                    "Hi there! How can I help you?"
-                )
-                buttons(
-                    "Help me!",
-                    "How are you?",
-                    "What is your name?"
-                )
+                sayRandom(slots?.values?.map { it.value }?.toList().orEmpty())
             }
         }
     }
 
     state("bye") {
         activators {
-            intent("Bye")
+            intent("goodbye")
         }
 
         action {
-            reactions.sayRandom(
-                "See you soon!",
-                "Bye-bye!"
-            )
-            reactions.image("https://media.giphy.com/media/EE185t7OeMbTy/source.gif")
+            val slots = activator.rasa?.slots
+            reactions.run {
+                sayRandom(slots?.values?.map { it.value }?.toList().orEmpty())
+            }
         }
     }
 
@@ -44,8 +36,11 @@ val mainScenario = Scenario {
             anyIntent()
         }
 
-        action(caila) {
-            activator.topIntent.answer?.let { reactions.say(it) } ?: reactions.go("/fallback")
+        action {
+            val slots = activator.rasa?.slots
+            reactions.run {
+                sayRandom(slots?.values?.map { it.value }?.toList().orEmpty())
+            }
         }
     }
 
